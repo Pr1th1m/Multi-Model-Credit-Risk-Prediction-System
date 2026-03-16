@@ -15,6 +15,11 @@ CONFUSION_DIR = os.path.join(RESULTS_DIR, "confusion_matrices")
 ROC_DIR = os.path.join(RESULTS_DIR, "roc_curves")
 
 # ──────────────────────────────────────────────
+# Logging
+# ──────────────────────────────────────────────
+MLFLOW_EXPERIMENT_NAME = "Credit_Risk_Multi_Model"
+
+# ──────────────────────────────────────────────
 # Data settings
 # ──────────────────────────────────────────────
 TARGET_COLUMN = "kredit"

@@ -9,9 +9,10 @@
 ## Development Rules
 1. **Python Imports**: Imports are resolved from the project root. When adding or modifying code in `src/`, use absolute imports starting with `src.` (e.g., `from src.config import ...`).
 2. **Environment**: This project uses a `.venv` folder for dependencies. The `.env` file specifies `PYTHONPATH=.` so tools like Pylance can resolve imports.
-3. **Data & Results**: Do not commit datasets to `data/` or model outputs to `results/`. These directories are gitignored.
-4. **Pipelines**: Modifications to the ML flow should be made modularly within `src/` and orchestrated in `src/pipeline.py`.
-5. **Linting/Formatting**: Ensure code follows standard PEP 8 conventions.
+3. **Tracking & MLflow**: The project uses `mlflow` for tracking hyperparameter tuning and model metrics. Evaluation metrics and model artifacts are automatically saved into the local `mlruns/` directory by the `run_pipeline()` function.
+4. **Data & Results**: Do not commit datasets to `data/`, model outputs to `results/`, or MLflow tracking data to `mlruns/`. These directories are gitignored.
+5. **Pipelines**: Modifications to the ML flow should be made modularly within `src/` and orchestrated in `src/pipeline.py`.
+6. **Linting/Formatting**: Ensure code follows standard PEP 8 conventions.
 
 ## Common Tasks
 - When asked to add a new model, update `src/models.py` and register it in `src/pipeline.py` or the appropriate configuration registry.

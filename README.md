@@ -13,7 +13,8 @@ A machine learning pipeline for credit risk prediction using various models (Log
   - `evaluation.py`: Model evaluation metrics and reporting.
   - `pipeline.py`: Main execution pipeline connecting data, models, and evaluation.
 - `data/`: Directory for input datasets (ignored in git).
-- `results/`: Directory for model outputs and evaluation reports (ignored in git).
+- `results/`: Directory for model outputs metrics (ignored in git).
+- `mlruns/`: Directory created automatically to store MLflow artifacts and metrics.
 - `notebooks/`: Jupyter notebooks for exploratory data analysis (EDA).
 
 ## Setup
@@ -34,8 +35,19 @@ A machine learning pipeline for credit risk prediction using various models (Log
 
 ## Usage
 
-Run the main pipeline:
+Run the main pipeline. This will train all models, log their hyperparameters and metrics using MLflow, and determine the best performing algorithm:
 
 ```bash
 python main.py
 ```
+
+### Viewing MLflow Dashboard
+
+After running the pipeline, you can view the detailed model comparisons, metrics, and saved artifacts in the MLflow UI:
+
+1. Open a terminal in the project root.
+2. Run the MLflow UI server:
+   ```bash
+   mlflow ui
+   ```
+3. Open your browser and navigate to [http://127.0.0.1:5000](http://127.0.0.1:5000).
