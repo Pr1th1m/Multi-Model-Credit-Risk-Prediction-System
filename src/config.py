@@ -90,4 +90,9 @@ PARAM_GRIDS = {
         "kernel": ["rbf", "linear"],
         "gamma": ["scale", "auto"],
     },
+    "CatBoost": {
+        "iterations": [100, 200],
+        "depth": [4, 6, 8],
+        "learning_rate": [0.01, 0.1, 0.2],
+    },
 }

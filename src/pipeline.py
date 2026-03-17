@@ -22,6 +22,7 @@ import mlflow
 import mlflow.sklearn
 import mlflow.xgboost
 import mlflow.lightgbm
+import mlflow.catboost
 
 
 def run_pipeline():
@@ -98,6 +99,8 @@ def run_pipeline():
                 mlflow.xgboost.log_model(best_model, "model")
             elif name == "LightGBM":
                 mlflow.lightgbm.log_model(best_model, "model")
+            elif name == "CatBoost":
+                mlflow.catboost.log_model(best_model, "model")
             else:
                 mlflow.sklearn.log_model(best_model, "model")
 

@@ -10,6 +10,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from xgboost import XGBClassifier
 from lightgbm import LGBMClassifier
+from catboost import CatBoostClassifier
 
 from src.config import PARAM_GRIDS, RANDOM_STATE
 
@@ -71,6 +72,14 @@ def get_models() -> dict:
                 probability=True,       # needed for ROC curves
             ),
             PARAM_GRIDS["SVM"],
+        ),
+        "CatBoost": (
+            CatBoostClassifier(
+                random_state=RANDOM_STATE,
+                auto_class_weights="Balanced",
+                verbose=0,
+            ),
+            PARAM_GRIDS["CatBoost"],
         ),
     }
     return models
