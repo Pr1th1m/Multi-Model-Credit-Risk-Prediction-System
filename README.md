@@ -21,16 +21,16 @@ A machine learning pipeline for credit risk prediction using various models (Log
 
 Here are the evaluation metrics for the models implemented in this pipeline, sorted by AUC-ROC:
 
-| Model | Accuracy | Precision | Recall | F1-Score | AUC-ROC |
-| --- | --- | --- | --- | --- | --- |
-| **SVM** | 0.730 | 0.9135 | 0.6786 | 0.7787 | 0.8470 |
-| **Logistic Regression** | 0.760 | 0.8833 | 0.7571 | 0.8154 | 0.8260 |
-| **Random Forest** | 0.775 | 0.8276 | 0.8571 | 0.8421 | 0.8243 |
-| **CatBoost** | 0.785 | 0.8345 | 0.8643 | 0.8491 | 0.8152 |
-| **XGBoost** | 0.750 | 0.7394 | 0.9929 | 0.8476 | 0.8088 |
-| **LightGBM** | 0.760 | 0.8239 | 0.8357 | 0.8298 | 0.8040 |
-| **KNN** | 0.735 | 0.7636 | 0.9000 | 0.8262 | 0.7545 |
-| **Decision Tree** | 0.680 | 0.8455 | 0.6643 | 0.7440 | 0.6859 |
+| Model                   | Accuracy | Precision | Recall | F1-Score | AUC-ROC |
+| ---                     | ---      | ---       | ---    | ---      | ---     |
+| **SVM**                 | 0.730    | 0.9135    | 0.6786 | 0.7787   | 0.8470  |
+| **Logistic Regression** | 0.760    | 0.8833    | 0.7571 | 0.8154   | 0.8260  |
+| **Random Forest**       | 0.775    | 0.8276    | 0.8571 | 0.8421   | 0.8243  |
+| **CatBoost**            | 0.785    | 0.8345    | 0.8643 | 0.8491   | 0.8152  |
+| **XGBoost**             | 0.750    | 0.7394    | 0.9929 | 0.8476   | 0.8088  |
+| **LightGBM**            | 0.760    | 0.8239    | 0.8357 | 0.8298   | 0.8040  |
+| **KNN**                 | 0.735    | 0.7636    | 0.9000 | 0.8262   | 0.7545  |
+| **Decision Tree**       | 0.680    | 0.8455    | 0.6643 | 0.7440   | 0.6859  |
 
 ## Setup
 
