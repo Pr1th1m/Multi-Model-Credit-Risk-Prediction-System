@@ -57,42 +57,50 @@ COLUMN_MAP = {
 # ──────────────────────────────────────────────
 PARAM_GRIDS = {
     "Logistic Regression": {
-        "C": [0.01, 0.1, 1, 10],
-        "solver": ["lbfgs"],
-        "max_iter": [1000],
+        "C": [0.001, 0.01, 0.1, 1, 10, 100],
+        "solver": ["lbfgs", "liblinear"],
+        "max_iter": [1000, 2000],
     },
     "Decision Tree": {
-        "max_depth": [3, 5, 10, None],
+        "max_depth": [3, 5, 10, 15, None],
         "min_samples_split": [2, 5, 10],
+        "min_samples_leaf": [1, 2, 4],
+        "criterion": ["gini", "entropy"]
     },
     "Random Forest": {
-        "n_estimators": [100, 200],
-        "max_depth": [5, 10, None],
-        "min_samples_split": [2, 5],
+        "n_estimators": [100, 200, 300],
+        "max_depth": [5, 10, 15, None],
+        "min_samples_split": [2, 5, 10],
+        "min_samples_leaf": [1, 2, 4],
+        "bootstrap": [True, False]
     },
     "XGBoost": {
-        "n_estimators": [100, 200],
-        "max_depth": [3, 5, 7],
-        "learning_rate": [0.01, 0.1, 0.2],
+        "n_estimators": [100, 200, 300],
+        "max_depth": [3, 5, 7, 9],
+        "learning_rate": [0.01, 0.05, 0.1, 0.2],
+        "subsample": [0.8, 1.0],
+        "colsample_bytree": [0.8, 1.0]
     },
     "LightGBM": {
-        "n_estimators": [100, 200],
-        "num_leaves": [15, 31, 63],
-        "learning_rate": [0.01, 0.1, 0.2],
+        "n_estimators": [100, 200, 300],
+        "num_leaves": [15, 31, 63, 127],
+        "learning_rate": [0.01, 0.05, 0.1, 0.2],
+        "subsample": [0.8, 1.0]
     },
     "KNN": {
-        "n_neighbors": [3, 5, 7, 11],
+        "n_neighbors": [3, 5, 7, 9, 11, 15],
         "weights": ["uniform", "distance"],
         "metric": ["euclidean", "manhattan"],
     },
     "SVM": {
-        "C": [0.1, 1, 10],
-        "kernel": ["rbf", "linear"],
-        "gamma": ["scale", "auto"],
+        "C": [0.1, 1, 10, 100],
+        "kernel": ["rbf", "linear", "sigmoid"],
+        "gamma": ["scale", "auto", 0.1, 1],
     },
     "CatBoost": {
-        "iterations": [100, 200],
-        "depth": [4, 6, 8],
-        "learning_rate": [0.01, 0.1, 0.2],
+        "iterations": [100, 200, 300],
+        "depth": [4, 6, 8, 10],
+        "learning_rate": [0.01, 0.05, 0.1, 0.2],
+        "l2_leaf_reg": [1, 3, 5, 7],
     },
 }
