@@ -4,7 +4,8 @@ Pipeline orchestrator — trains, tunes, evaluates, and compares all models.
 
 import time
 import numpy as np
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import cross_val_score
+import optuna
 
 from src.config import RANDOM_STATE, CV_FOLDS, RESULTS_DIR, MLFLOW_EXPERIMENT_NAME
 from src.data_loader import load_data, print_target_distribution, print_feature_summary
@@ -51,21 +52,46 @@ def run_pipeline():
         print(f"{'=' * 60}")
 
         with mlflow.start_run(run_name=name):
-            start = time.time()            # GridSearchCV for hyperparameter tuning
-            grid = GridSearchCV(
-                estimator=estimator,
-                param_grid=param_grid,
-                cv=CV_FOLDS,
-                scoring="roc_auc",
-                n_jobs=-1,
-                refit=True,
-            )
-            grid.fit(X_train, y_train)
+            start = time.time()
+            # Optuna for hyperparameter tuning
+            optuna.logging.set_verbosity(optuna.logging.WARNING)
+            
+            from sklearn.base import clone
+            def objective(trial):
+                params = {}
+                for param_name, param_values in param_grid.items():
+                    params[param_name] = trial.suggest_categorical(param_name, param_values)
+                
+                model = clone(estimator)
+                model.set_params(**params)
+                
+                scores = cross_val_score(
+                    model, X_train, y_train, 
+                    cv=CV_FOLDS, 
+                    scoring="roc_auc", 
+                    n_jobs=-1
+                )
+                return np.mean(scores)
+            
+            study = optuna.create_study(direction="maximize")
+
+            # Calculate upper bound on combinations based on grid
+            max_trials = 1
+            for vals in param_grid.items():
+                max_trials *= len(vals[1])
+            
+            # Limit trials to 20 or max combinations for small grids
+            n_trials = min(20, max_trials)
+            study.optimize(objective, n_trials=n_trials)
+            
             elapsed = time.time() - start
     
-            best_model = grid.best_estimator_
-            print(f"  Best params : {grid.best_params_}")
-            print(f"  Best CV AUC : {grid.best_score_:.4f}")
+            best_params = study.best_params
+            best_model = clone(estimator).set_params(**best_params)
+            best_model.fit(X_train, y_train)
+
+            print(f"  Best params : {best_params}")
+            print(f"  Best CV AUC : {study.best_value:.4f}")
             print(f"  Train time  : {elapsed:.1f}s")
 
             # Evaluate on test set
@@ -87,7 +113,7 @@ def run_pipeline():
             
             # ── Log to MLflow ─────────────────────────
             # Log best hyperparameters
-            mlflow.log_params(grid.best_params_)
+            mlflow.log_params(best_params)
             
             # Log metrics (Precision, Recall, F1, Accuracy, AUC)
             # Remove string key 'Model' to just log numerical metrics
