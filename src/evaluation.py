@@ -9,6 +9,7 @@ import matplotlib
 matplotlib.use("Agg")   # non-interactive backend for saving plots
 import matplotlib.pyplot as plt
 import seaborn as sns
+import shap
 from sklearn.metrics import (
     accuracy_score,
     precision_score,
@@ -20,7 +21,7 @@ from sklearn.metrics import (
     roc_curve,
 )
 
-from src.config import CONFUSION_DIR, ROC_DIR
+from src.config import CONFUSION_DIR, ROC_DIR, SHAP_DIR
 
 
 def evaluate_model(name: str, model, X_test, y_test) -> dict:
@@ -75,9 +76,10 @@ def plot_confusion_matrix(name: str, y_test, y_pred, save_dir: str = CONFUSION_D
     ax.set_ylabel("Actual")
     fig.tight_layout()
     filepath = os.path.join(save_dir, f"{name.replace(' ', '_')}_cm.png")
-    fig.savefig(filepath, dpi=150)
+    fig.savefig(filepath, dpi=100, bbox_inches="tight")
     plt.close(fig)
     print(f"  ✓ Confusion matrix saved → {filepath}")
+    return filepath
 
 
 def plot_roc_curve(name: str, y_test, y_proba, save_dir: str = ROC_DIR):
@@ -97,9 +99,43 @@ def plot_roc_curve(name: str, y_test, y_proba, save_dir: str = ROC_DIR):
     ax.legend(loc="lower right")
     fig.tight_layout()
     filepath = os.path.join(save_dir, f"{name.replace(' ', '_')}_roc.png")
-    fig.savefig(filepath, dpi=150)
+    fig.savefig(filepath, dpi=100, bbox_inches="tight")
     plt.close(fig)
     print(f"  ✓ ROC curve saved → {filepath}")
+    return filepath
+
+
+def plot_shap_summary(name: str, model, X_test_df: pd.DataFrame, save_dir: str = SHAP_DIR):
+    """Save a SHAP summary plot for model interpretability."""
+    os.makedirs(save_dir, exist_ok=True)
+    
+    # Select explainer based on model type
+    if name in ["Random Forest", "Decision Tree", "XGBoost", "LightGBM", "CatBoost"]:
+        explainer = shap.TreeExplainer(model)
+        shap_values = explainer.shap_values(X_test_df)
+    elif name in ["Logistic Regression"]:
+        explainer = shap.LinearExplainer(model, X_test_df)
+        shap_values = explainer.shap_values(X_test_df)
+    else:
+        print(f"  ✓ SHAP summary skipped for {name} (KernelExplainer is too slow)")
+        return None
+
+    plt.clf()
+    
+    # Control the SHAP internal sizing natively and reduce DPI
+    if isinstance(shap_values, list) and len(shap_values) > 1:
+        shap.summary_plot(shap_values[1], X_test_df, show=False, plot_size=(7, 4.5), max_display=12)
+    else:
+        shap.summary_plot(shap_values, X_test_df, show=False, plot_size=(7, 4.5), max_display=12)
+        
+    plt.title(f"{name} — SHAP Summary")
+    fig = plt.gcf()
+    filepath = os.path.join(save_dir, f"{name.replace(' ', '_')}_shap.png")
+    fig.savefig(filepath, dpi=100, bbox_inches='tight')
+    plt.close(fig)
+    
+    print(f"  ✓ SHAP summary saved → {filepath}")
+    return filepath
 
 
 def save_comparison_table(results: list[dict], save_path: str) -> pd.DataFrame:

@@ -6,8 +6,9 @@ import time
 import numpy as np
 from sklearn.model_selection import cross_val_score
 import optuna
+import pandas as pd
 
-from src.config import RANDOM_STATE, CV_FOLDS, RESULTS_DIR, MLFLOW_EXPERIMENT_NAME
+from src.config import RANDOM_STATE, CV_FOLDS, RESULTS_DIR, MLFLOW_EXPERIMENT_NAME, COLUMN_MAP
 from src.data_loader import load_data, print_target_distribution, print_feature_summary
 from src.preprocessing import prepare_data
 from src.models import get_models
@@ -16,6 +17,7 @@ from src.evaluation import (
     plot_confusion_matrix,
     plot_roc_curve,
     save_comparison_table,
+    plot_shap_summary,
 )
 
 import os
@@ -108,12 +110,26 @@ def run_pipeline():
                 y_proba = y_pred.astype(float)
     
             # Save plots
-            plot_confusion_matrix(name, y_test, y_pred)
-            plot_roc_curve(name, y_test, y_proba)
+            cm_path = plot_confusion_matrix(name, y_test, y_pred)
+            roc_path = plot_roc_curve(name, y_test, y_proba)
+            
+            # Generate SHAP summary
+            X_test_df = pd.DataFrame(X_test, columns=feature_names).rename(columns=COLUMN_MAP)
+            try:
+                shap_path = plot_shap_summary(name, best_model, X_test_df)
+            except Exception as e:
+                shap_path = None
+                print(f"  ✗ SHAP summary skipped for {name}: {e}")
             
             # ── Log to MLflow ─────────────────────────
             # Log best hyperparameters
             mlflow.log_params(best_params)
+            
+            # Log plots to MLflow artifacts
+            mlflow.log_artifact(cm_path, "plots")
+            mlflow.log_artifact(roc_path, "plots")
+            if shap_path:
+                mlflow.log_artifact(shap_path, "plots")
             
             # Log metrics (Precision, Recall, F1, Accuracy, AUC)
             # Remove string key 'Model' to just log numerical metrics

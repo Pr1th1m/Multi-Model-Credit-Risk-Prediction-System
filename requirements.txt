@@ -8,3 +8,4 @@ seaborn
 mlflow
 catboost
 optuna
+shap

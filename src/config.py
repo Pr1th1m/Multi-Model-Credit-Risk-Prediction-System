@@ -13,6 +13,7 @@ DATA_PATH = os.path.join(BASE_DIR, "data", "german_credit_data.csv")
 RESULTS_DIR = os.path.join(BASE_DIR, "results")
 CONFUSION_DIR = os.path.join(RESULTS_DIR, "confusion_matrices")
 ROC_DIR = os.path.join(RESULTS_DIR, "roc_curves")
+SHAP_DIR = os.path.join(RESULTS_DIR, "shap_plots")
 
 # ──────────────────────────────────────────────
 # Logging
